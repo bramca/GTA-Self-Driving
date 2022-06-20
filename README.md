@@ -7,7 +7,7 @@ There are 3 models in this repo:
 - [gta_self_driving.py](./gta_self_driving.py)
   This is a machine learning model where you first generate training and test data via playing the game.
   Then this model will train on this data and try to teach itself to drive.
-  To use this model enter command `python gta_self_driving.py [-o|--objectdetectin] <object detection filename> [-l|--lanedetection] <lane detection filename> [-t|--task] <generate, train, predict>`
+  To use this model enter command `python gta_self_driving.py [-o|--objectdetection] <object detection filename> [-l|--lanedetection] <lane detection filename> [-t|--task] <generate, train, predict>`
   requirements:
   ```
   numpy
