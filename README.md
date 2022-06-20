@@ -1,5 +1,6 @@
-# GTA V Self Driving
-This repo contains `python` scripts that try learn the machine to drive a car in GTA V.
+# GTA Self Driving
+This repo contains `python` scripts that try learn the machine to drive a car in GTA.
+Currently the models are only tested on GTA V.
 
 # Models
 There are 3 models in this repo:
