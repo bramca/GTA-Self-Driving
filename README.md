@@ -75,7 +75,7 @@ Start this model while the game is loaded and the character is placed in a car o
 The model will start driving automatically when it is started.<br>
 To quit you can press the key `q`.
 
-## gta self drivinng lane detection algo
+## gta self driving lane detection algo
 To start this model enter command `python gta_self_driving_lane_detection.py`.<br>
 Start this model while the game is loaded and the character is placed in a car on **first person view**.<br>
 The model will start driving automatically when it is started.<br>
