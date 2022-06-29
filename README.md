@@ -82,6 +82,6 @@ The model will start driving automatically when it is started.<br>
 To quit you can press the key `q`.
 
 # TODO
-Currently the models are not very good add driving.<br>
+Currently the models are not very good at driving.<br>
 - TODO: More diverse training data for the first model.
 - TODO: Look at implementing a convolutional neural network model.
