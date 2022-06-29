@@ -57,7 +57,7 @@ There are 3 models in this repo:
 For all the models you need to startup the game in windowed mode on 800x600 resolution.<br>
 Then put the game window in the top left corner of your screen.<br>
 The scripts will start recording and analysing the top left 800x630 box (a bit of margin for the border) on your screen.<br>
-You can ofcourse change this by changing the values in the `ImageGrag.grab(pos_x, pos_y, width, height)` function in the scripts.
+You can ofcourse change this by changing the values in the `ImageGrab.grab(pos_x, pos_y, width, height)` function in the scripts.
 
 ## gta self driving machine learning model
 Like stated previously you can start this model using the command `python gta_self_driving.py [-o|--objectdetection] <object detection filename> [-l|--lanedetection] <lane detection filename> [-t|--task] <generate, train, predict>`<br>
