@@ -49,3 +49,14 @@ There are 3 models in this repo:
   pandas
   Pillow
   ```
+  
+# How to use the models
+## gta self driving machine learning model
+Like stated previously you can start this model using the command `python gta_self_driving.py [-o|--objectdetection] <object detection filename> [-l|--lanedetection] <lane detection filename> [-t|--task] <generate, train, predict>`<br>
+options:
+- *-o | --objectdetection*: provide the filename for your object detection training data, models and prediction data. The data will be stored in a file with the provided name respectively in the folders training_data, models and prediction_data.
+- *-l | --lanedetection*: provide the filename for your lane detection training data, models and prediction data.
+- *-t | --task*: this can be one of multiple values
+  - `generate`: generate training data for the models, this requires you to be driving around in the game in first person view so the training data contains inputs per frame. To quit generating you can press `q`.
+  - `train`: train the models on the generated training data.
+- `predict`: start the game in a car and this script with this task on to have the AI driving the car based on the models it was trained on. To stop the AI from driving you can press `q`.

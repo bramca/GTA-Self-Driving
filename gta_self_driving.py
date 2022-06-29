@@ -40,7 +40,7 @@ def on_release(key):
     if key == KeyCode.from_char('q'):
         keyboard_input[3] = 0
 
-def train_data(data, filename, write_to_file=False):
+def train_data(data, model_filename, weights_filename, write_to_file=False):
     data.loc[data.label != 'none', 'label'] = 1
     data.loc[data.label == 'none', 'label'] = 0
     X_column_names = data.columns.values[1:-4]
@@ -67,14 +67,14 @@ def train_data(data, filename, write_to_file=False):
 
     if write_to_file:
         model_json = model.to_json()
-        with open('{}.json'.format(filename), 'w') as json_file:
+        with open(model_filename, 'w') as json_file:
             json_file.write(model_json)
 
         print("save model to disk")
-        model.save_weights('{}.h5'.format(filename))
+        model.save_weights(weights_filename)
     return model
 
-def train_lines_data(data, filename, write_to_file=False):
+def train_lines_data(data, model_filename, weights_filename, write_to_file=False):
     X_column_names = data.columns.values[1:-4]
     Y_column_names = data.columns.values[-4:]
     print(X_column_names)
@@ -101,11 +101,11 @@ def train_lines_data(data, filename, write_to_file=False):
 
     if write_to_file:
         model_json = model.to_json()
-        with open('{}.json'.format(filename), 'w') as json_file:
+        with open(model_filename, 'w') as json_file:
             json_file.write(model_json)
 
         print("save model to disk")
-        model.save_weights('{}.h5'.format(filename))
+        model.save_weights(weights_filename)
     return model
 
 
@@ -232,7 +232,7 @@ def object_detection(screen, training_data, model):
     print(predictions)
     return output_image, predictions
 
-def lane_detection(screen, lines_training_data, lines_model, lines_data_file_name):
+def lane_detection(screen, lines_model):
     columns = []
     for i  in range(0, 8):
         columns.append("x" + str(i))
@@ -263,11 +263,17 @@ def main():
     keyboard_input = [0, 0, 0, 0]
     listener = Listener(on_press=on_press, on_release=on_release)
 
-    obj_data_file_name = '{}_train.csv'.format(object_detection_file)
-    lines_data_file_name = '{}_train.csv'.format(lane_detection_file)
+    obj_data_file_name = 'training_data/{}_train.csv'.format(object_detection_file)
+    lines_data_file_name = 'training_data/{}_train.csv'.format(lane_detection_file)
 
-    obj_model_file_name = '{}.json'.format(object_detection_file)
-    lines_model_file_name = '{}.json'.format(lane_detection_file)
+    obj_predict_file_name = 'prediction_data/{}_predict.csv'.format(object_detection_file)
+    lines_predict_file_name = 'prediction_data/{}_predict.csv'.format(lane_detection_file)
+
+    obj_model_file_name = 'models/{}.json'.format(object_detection_file)
+    lines_model_file_name = 'models/{}.json'.format(lane_detection_file)
+
+    obj_weights_file_name = 'models/{}.h5'.format(object_detection_file)
+    lines_weights_file_name = 'models/{}.h5'.format(lane_detection_file)
 
     obj_training_data = pd.DataFrame(columns=['x', 'y', 'w', 'h', 'label', 'z', 'd', 's', 'q'])
     columns = []
@@ -289,7 +295,7 @@ def main():
             loaded_model_json = json_file.read()
             json_file.close()
             lines_model = model_from_json(loaded_model_json)
-            lines_model.load_weights('{}.h5'.format(lane_detection_file))
+            lines_model.load_weights(lines_weights_file_name)
             lines_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             print("loaded lines model from disk")
         elif task == 'train':
@@ -299,7 +305,7 @@ def main():
                 raise Exception("file {} does not exist, abort!".format(lines_data_file_name))
             lines_training_data = pd.read_csv(lines_data_file_name, sep=",")
             print(lines_training_data)
-            lines_model = train_lines_data(lines_training_data, lane_detection_file, write_to_file=True)
+            lines_model = train_lines_data(lines_training_data, lines_model_file_name, lines_weights_file_name, write_to_file=True)
             X_column_names = lines_training_data.columns.values[1:-4]
             Y_column_names = lines_training_data.columns.values[-4:]
             X = lines_training_data[X_column_names]
@@ -308,11 +314,11 @@ def main():
             predict_data = pd.DataFrame()
             for prediction in predictions:
                 predict_data = predict_data.append(dict(zip(['z', 'd', 's', 'q'], prediction)), ignore_index=True)
-                print(predictions)
-                print(predict_data)
-                predict_data.to_csv('{}_test.csv'.format(lane_detection_file))
-                _, accuracy = lines_model.evaluate(X, Y)
-                print("accuracy: %.2f" % accuracy)
+            print(predictions)
+            print(predict_data)
+            predict_data.to_csv(lines_predict_file_name)
+            _, accuracy = lines_model.evaluate(X, Y)
+            print("accuracy: %.2f" % accuracy)
         else:
             print('lines training data file does not exist, starting fresh!')
 
@@ -326,7 +332,7 @@ def main():
             loaded_model_json = json_file.read()
             json_file.close()
             obj_model = model_from_json(loaded_model_json)
-            obj_model.load_weights('{}.h5'.format(object_detection_file))
+            obj_model.load_weights(obj_weights_file_name)
             obj_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             print("loaded model from disk")
         elif task == 'train':
@@ -335,7 +341,7 @@ def main():
             else:
                 raise Exception("file {} does not exist, abort!".format(obj_data_file_name))
             obj_training_data = pd.read_csv(obj_data_file_name, sep=",")
-            obj_model = train_data(obj_training_data, object_detection_file, write_to_file=True)
+            obj_model = train_data(obj_training_data, obj_model_file_name, obj_weights_file_name, write_to_file=True)
             obj_training_data.loc[obj_training_data.label != 'none', 'label'] = 1
             obj_training_data.loc[obj_training_data.label == 'none', 'label'] = 0
             X_column_names = obj_training_data.columns.values[1:-4]
@@ -348,7 +354,7 @@ def main():
                 predict_data = predict_data.append(dict(zip(['z', 'd', 's', 'q'], prediction)), ignore_index=True)
             print(predictions)
             print(predict_data)
-            predict_data.to_csv('{}_test.csv'.format(object_detection_file))
+            predict_data.to_csv(obj_predict_file_name)
             _, accuracy = obj_model.evaluate(X, Y)
             print("accuracy: %.2f" % accuracy)
         else:
@@ -368,7 +374,7 @@ def main():
                     predictions_to_key_strokes(object_detection_predictions)
 
                 if lane_detection_file != '':
-                    lane_detection_predictions = lane_detection(screen, lines_training_data, lines_model, lines_data_file_name)
+                    lane_detection_predictions = lane_detection(screen, lines_model)
                     if lane_detection_predictions is not None:
                         predictions_to_key_strokes(lane_detection_predictions)
 
