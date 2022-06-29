@@ -16,6 +16,7 @@ There are 3 models in this repo:
   pyautogui
   sklearn
   pandas
+  tensorflow
   keras
   scipy
   numpy
