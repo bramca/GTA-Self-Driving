@@ -80,3 +80,8 @@ To start this model enter command `python gta_self_driving_lane_detection.py`.<b
 Start this model while the game is loaded and the character is placed in a car on **first person view**.<br>
 The model will start driving automatically when it is started.<br>
 To quit you can press the key `q`.
+
+# TODO
+Currently the models are not very good add driving.<br>
+- TODO: More diverse training data for the first model.
+- TODO: Look at implementing a convolutional neural network model.
